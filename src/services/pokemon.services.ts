@@ -1,13 +1,15 @@
 import axios from 'axios';
 
 class PokemonServices {
-  public async getterPokemon(): Promise<any> {
+  public async getPokemon(pokemonName: string): Promise<any> {
     try {
-      const { data: pokemon } = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=20');
-      if (!pokemon) {
-        throw new Error('Not found pokemon');
+      const url = `https://pokeapi.co/api/v2/pokemon/${pokemonName}/`;
+      const response = await axios.get(url);
+      const { name, base_experience: baseExperience } = response.data;
+      if (!name || !baseExperience) {
+        throw new Error('Pokemon name or base experience not found');
       }
-      return pokemon;
+      return { name, baseExperience };
     } catch (error: any) {
       throw new Error(error.message);
     }
