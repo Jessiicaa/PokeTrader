@@ -20,7 +20,17 @@ route.post('/', async (request: Request, response: Response): Promise<Pokemon | 
 
     return response.status(HttpStatusCode.CREATED).send(arraypokemonsPlayerOne);
   } catch (error: any) {
-    throw new Error(`{'status': ${HttpStatusCode.NOT_FOUND}, 'message': ${error.message}}`);
+    return response.status(HttpStatusCode.GONE).send(error.message);
+  }
+});
+
+route.get('/trades', async (request: Request, response: Response): Promise<Pokemon | any> => {
+  try {
+    const pokemonService = new PokemonServices();
+    const tradeHistory = await pokemonService.listTrades();
+    return response.status(HttpStatusCode.OK).send(tradeHistory);
+  } catch (error: any) {
+    return response.status(HttpStatusCode.GONE).send(error.message);
   }
 });
 

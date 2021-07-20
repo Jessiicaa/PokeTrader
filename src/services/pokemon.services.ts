@@ -1,8 +1,21 @@
 import axios from 'axios';
 import HttpStatusCode from 'http-status-codes';
+import { Model } from 'mongoose';
+import db from '../db';
 import { Pokemon, pokemonsPlayer } from '../interfaces/pokemon.interface';
+import { Trade, TradeInput } from '../interfaces/trade.interface';
+import tradeModel from '../models/trade.model';
+import utils from '../utils';
 
 class PokemonServices {
+  constructor() {
+    db();
+  }
+
+  private get repositoryTrades(): Model<Trade> {
+    return tradeModel;
+  }
+
   private async getPokemon(pokemonName: string): Promise<any> {
     try {
       const url = `https://pokeapi.co/api/v2/pokemon/${pokemonName}/`;
@@ -70,6 +83,14 @@ class PokemonServices {
         fairnessMessage = 'This trade is not fair';
       } else {
         fairnessMessage = 'This trade is fair';
+        const transaction = {
+          first_player_pokemons: pokemonsArrayPlayerOne,
+          second_player_pokemons: pokemonsArrayPlayerTwo,
+        } as TradeInput;
+        const createNotation = await this.createNotationHistory(transaction);
+        if (!createNotation) {
+          throw new Error(`{status: ${HttpStatusCode.INTERNAL_SERVER_ERROR}, message: Error to create notation.}`);
+        }
       }
 
       return {
@@ -78,6 +99,33 @@ class PokemonServices {
         fairTrade: fairnessMessage,
 
       };
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  private async createNotationHistory(data: TradeInput): Promise<Trade> {
+    try {
+      const tradeToInsert = {
+        first_player_id: utils.generateUUIds(),
+        second_player_id: utils.generateUUIds(),
+        first_player_pokemons: data.first_player_pokemons,
+        second_player_pokemons: data.second_player_pokemons,
+      } as TradeInput;
+      const historyInsert = await this.repositoryTrades.create(tradeToInsert);
+      return historyInsert;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  public async listTrades(): Promise<Array<Trade>> {
+    try {
+      const history = await this.repositoryTrades.find();
+      if (!history) {
+        throw new Error(`{status: ${HttpStatusCode.NOT_FOUND}, message: History not found.}`);
+      }
+      return history;
     } catch (error: any) {
       throw new Error(error.message);
     }
