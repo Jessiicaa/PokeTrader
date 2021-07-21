@@ -3,7 +3,7 @@ import { env } from 'process';
 
 export default () => {
   const connectionDB = () => {
-    connect(env.URI_DB ? env.URI_DB : 'mongodb://localhost:27017/pokeTrade',
+    connect(env.URI_DB ? env.URI_DB : 'mongodb+srv://pokemon:<pokemonPwd>@cluster0.9pkxh.mongodb.net/pokeTrade',
       {
         useCreateIndex: true,
         useUnifiedTopology: true,
