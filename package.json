@@ -5,7 +5,7 @@
   "author": "Jessica Oliveira <jessiicaasoliveira@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "tsc",
+    "build": "bower install && grunt build",
     "dev": "ts-node-dev --inspect --transpile-only --ignore-watch node_modules src/server.ts",
     "start": "node build/src/server.js"
   },
