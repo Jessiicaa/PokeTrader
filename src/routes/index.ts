@@ -5,6 +5,8 @@ import PokemonServices from '../services/pokemon.services';
 
 const route = Router();
 
+route.get('/', (request: Request, response: Response) => response.status(HttpStatusCode.OK).send({ status: 'Up!' }));
+
 route.post('/', async (request: Request, response: Response): Promise<Pokemon | any> => {
   try {
     const { pokemonsPlayerOne, pokemonsPlayerTwo } = request.body;
