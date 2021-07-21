@@ -27,7 +27,7 @@ $ docker-compose up -d
 # Execute a aplicação em modo de desenvolvimento
 $ yarn dev
 
-# O servidor inciará na porta:4003
+# O servidor inciará na porta:3333
 ```
 
 ### Produção
